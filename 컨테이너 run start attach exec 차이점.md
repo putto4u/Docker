@@ -60,3 +60,61 @@
 $$
 \text{최초 실행: } docker run \quad \rightarrow \quad \text{재시작: } docker start \quad \rightarrow \quad \text{내부 진입: } docker exec
 $$
+
+---
+
+## 💡 도커 명령어에서 `container` 생략 가능 여부
+
+결론부터 말씀드리면, **대부분의 상황에서 `container`라는 키워드를 생략할 수 없습니다.** 하지만 이는 도커 명령어가 발전해 온 역사적 배경과 관련이 있습니다.
+
+IT 전문가의 관점에서 도커 명령어 구조와 `container` 키워드의 역할에 대해 명확하게 설명합니다.
+
+---
+
+### 1. ⚙️ 도커 명령어의 표준 구조
+
+도커 명령어는 일반적으로 다음과 같은 구조를 따릅니다.
+
+$$
+\text{docker} \quad [\text{Management Command}] \quad [\text{Sub-Command}] \quad [\text{Options}] \quad [\text{Arguments}]
+$$
+
+* **`docker`**: 도커 클라이언트 호출
+* **Management Command (관리 명령어)**: 관리할 객체(Object)의 종류 지정. (예: `container`, `image`, `volume`, `network`, `swarm`, `system` 등)
+* **Sub-Command (하위 명령어)**: 해당 객체에 대한 구체적인 작업 지정. (예: `run`, `start`, `ls`, `rm` 등)
+
+### 2. ✅ `container` 키워드를 생략할 수 있는 경우
+
+도커는 사용자 편의성을 위해 **가장 많이 사용되는 몇몇 명령어**에 대해서는 **`container` 관리 명령어를 생략**하고 바로 하위 명령어를 사용할 수 있도록 허용합니다.
+
+| 생략 가능 명령어 | 표준 형식 | 간소화된 형식 (생략 가능) |
+| :--- | :--- | :--- |
+| **실행** | `docker container run` | **`docker run`** |
+| **시작** | `docker container start` | **`docker start`** |
+| **중지** | `docker container stop` | **`docker stop`** |
+| **재시작** | `docker container restart` | **`docker restart`** |
+| **제거** | `docker container rm` | **`docker rm`** |
+
+> **이유:** 이 명령어들은 컨테이너가 주된 객체이고 사용 빈도가 매우 높기 때문에, 초기 도커 버전에서부터 `docker run`과 같이 바로 사용하도록 설계되었기 때문입니다.
+
+### 3. ❌ `container` 키워드를 생략할 수 없는 경우 (필수)
+
+컨테이너의 **목록을 보거나** 다른 도커 객체(이미지, 볼륨 등)를 다룰 때는 **`container` 키워드를 명시해야 합니다.**
+
+| 명령어 | 표준 형식 | 생략 불가 이유 |
+| :--- | :--- | :--- |
+| **목록 확인** | `docker container ls` | **`docker ls`**와 같은 명령어는 존재하지 않으며, `docker ls`는 `ls` 자체가 아닙니다. |
+| **로그 확인** | `docker container logs` | **`docker logs`**는 가능하지만, 공식적인 구조는 `container`를 포함하는 것을 권장합니다. |
+| **이미지 관련** | `docker image ls` | **`docker ls`**는 불가능합니다. 관리 객체(`image`)를 지정해야 합니다. |
+| **볼륨 관련** | `docker volume create` | 관리 객체(`volume`)를 지정해야 합니다. |
+
+### 4. 💡 실전 팁: `container`를 명시하는 습관
+
+비록 `docker run`처럼 생략이 가능하더라도, 실무에서는 **`docker container run`**과 같이 **`container` 관리 명령어를 명시하는 것을 권장**합니다.
+
+* **명확성 확보:** 명령어만 보더라도 이 작업이 **컨테이너**를 대상으로 하는 것임을 명확하게 알 수 있어 스크립트나 강의 자료의 가독성이 높아집니다.
+* **일관성 유지:** 모든 명령어 구조를 `docker <OBJECT> <COMMAND>` 형태로 통일하여 실수할 여지를 줄입니다.
+
+> **예시:** `docker container ls`는 실행 중인 컨테이너 목록을 보여줍니다. `docker ps`는 구 버전의 `docker container ls`의 별칭입니다.
+
+따라서 `docker run`을 제외한 다른 명령어들, 특히 목록을 보는 `ls`와 같은 명령어에서는 `container`를 생략할 수 없으며, 가능한 모든 명령어에서 명시하는 것이 좋습니다.
